@@ -92,7 +92,7 @@ func (c *proposals) UpdateProposalStatus(ctx context.Context, input *coresSdk.Up
 
 func (c *proposals) VoteProposal(ctx context.Context, input *coresSdk.VoteProposalInput, output *coresSdk.VoteProposalResult) (err error) {
 	stmt := `
-		INSERT INTO proposal_votes(tx_id, proposal_id, amount vote_type, wallet_addr, create_at)
+		INSERT INTO proposal_votes(tx_id, proposal_id, amount, vote_type, wallet_addr, create_at)
 		VALUES (${txId}, ${proposalId}, ${amount}, ${voteType}, ${walletAddr}, ${createAt})
 	`
 	var voteType int
