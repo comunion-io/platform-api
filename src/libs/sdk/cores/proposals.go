@@ -70,7 +70,7 @@ type VoteProposalInput struct {
 	Amount     float32  `json:"amount" validate:"required"`
 	IsApproved bool     `json:"isApproved" validate:"required"`
 	WalletAddr string   `json:"walletAddr" validate:"required"`
-	CreatedAt  string   `json:"createdAt" validate:"required"`
+	CreatedAt  string   `json:"createdAt"`
 }
 
 type VoteProposalResult struct {

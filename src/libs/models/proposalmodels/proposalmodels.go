@@ -92,22 +92,16 @@ func (c *proposals) UpdateProposalStatus(ctx context.Context, input *coresSdk.Up
 
 func (c *proposals) VoteProposal(ctx context.Context, input *coresSdk.VoteProposalInput, output *coresSdk.VoteProposalResult) (err error) {
 	stmt := `
-		INSERT INTO proposal_votes(tx_id, proposal_id, amount, vote_type, wallet_addr, create_at)
-		VALUES (${txId}, ${proposalId}, ${amount}, ${voteType}, ${walletAddr}, ${createAt})
+		INSERT INTO proposal_votes(tx_id, proposal_id, amount, is_approved, wallet_addr)
+		VALUES (${txId}, ${proposalId}, ${amount}, ${isApproved}, ${walletAddr})
+		RETURNING id;
 	`
-	var voteType int
-	if input.IsApproved {
-		voteType = 1
-	} else {
-		voteType = 2
-	}
 	query, args := util.PgMapQuery(stmt, map[string]interface{}{
 		"{txId}":       input.TxId,
 		"{proposalId}": input.Id,
 		"{amount}":     input.Amount,
-		"{voteType}":   voteType,
+		"{isApproved}":   input.IsApproved,
 		"{walletAddr}": input.WalletAddr,
-		"{createAt}":   input.CreatedAt,
 	})
 	return c.Invoke(ctx, func(db *sqlx.Tx) error {
 		return db.GetContext(ctx, output, query, args...)
