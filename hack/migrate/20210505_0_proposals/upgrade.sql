@@ -1,4 +1,4 @@
-CREATE TABLE proposals (
+CREATE TABLE comunion.proposals (
     id bigint DEFAULT comunion.id_generator() NOT NULL
         CONSTRAINT proposals_id_pk
             PRIMARY KEY,
@@ -32,7 +32,7 @@ COMMENT ON COLUMN comunion.proposals.type IS '1：Finance，2：Governance，3�
 COMMENT ON COLUMN comunion.proposals.voter_type IS '1：FounderAssign，2：POS，3：All';
 COMMENT ON COLUMN comunion.proposals.payment_type IS '1：一次性支付，2：按月支付';
 
-CREATE TABLE proposal_terms (
+CREATE TABLE comunion.proposal_terms (
     id bigint DEFAULT comunion.id_generator() NOT NULL
        CONSTRAINT proposal_terms_id_pk
            PRIMARY KEY,
@@ -43,7 +43,7 @@ CREATE TABLE proposal_terms (
     updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE proposal_votes (
+CREATE TABLE comunion.proposal_votes (
     id bigint DEFAULT comunion.id_generator() NOT NULL
         CONSTRAINT proposal_votes_id_pk
             PRIMARY KEY,

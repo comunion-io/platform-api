@@ -74,6 +74,7 @@ type VoteProposalInput struct {
 }
 
 type VoteProposalResult struct {
+	VoteProposalId flake.ID `json:"voteProposalId" db:"id"`
 }
 
 type CreateTermResult struct {

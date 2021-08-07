@@ -272,6 +272,7 @@ func (p *appConfig) ConfigRoutes() {
 				s.Get(proposals.ProposalsHandler{}).Action("ListProposals")),
 		),
 		s.Router("/proposal/:id",
+			// s.Filter(filters.LoginRequiredInner),
 			s.Post(proposals.ProposalEventsHandler{}).Action("UpdateProposalStatus"),
 			s.Router("/vote", s.Post(proposals.ProposalEventsHandler{}).Action("VoteProposal")),
 		),
