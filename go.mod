@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/HdrHistogram/hdrhistogram-go v1.1.0 // indirect
-	github.com/ethereum/go-ethereum v1.9.14
+	github.com/ethereum/go-ethereum v1.9.25
 	github.com/go-ini/ini v1.56.0 // indirect
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
@@ -28,7 +28,7 @@ require (
 	github.com/wujiu2020/sqlhooks v0.0.0-20200514182239-c1d2a8cea375
 	github.com/wujiu2020/strip v0.0.0-20200513164619-4720c736da6b
 	go.uber.org/zap v1.15.0
-	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f
+	golang.org/x/net v0.0.0-20200822124328-c89045814202
 	google.golang.org/appengine v1.6.7 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0
