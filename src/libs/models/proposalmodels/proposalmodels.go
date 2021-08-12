@@ -100,7 +100,7 @@ func (c *proposals) VoteProposal(ctx context.Context, input *coresSdk.VotePropos
 		"{txId}":       input.TxId,
 		"{proposalId}": input.Id,
 		"{amount}":     input.Amount,
-		"{isApproved}":   input.IsApproved,
+		"{isApproved}": input.IsApproved,
 		"{walletAddr}": input.WalletAddr,
 	})
 	return c.Invoke(ctx, func(db *sqlx.Tx) error {
@@ -185,6 +185,7 @@ func (c *proposals) GetProposal(ctx context.Context, input *coresSdk.GetProposal
 					pr.payment_date,
 					pr.payment_amount,
 					pr.total_payment_amount,
+					COALESCE((SELECT COUNT(DISTINCT vc.wallet_addr) FROM votes_cte vc GROUP BY vc.wallet_addr), 0) AS voter_amount,
 					COALESCE(vcg.votes, '[]'::json) AS votes,
 					COALESCE(tcg.terms, '[]'::json) AS terms
 	    		FROM proposals pr
