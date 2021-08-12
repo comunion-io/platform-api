@@ -119,6 +119,7 @@ type ProposalResult struct {
 	PaymentDate        string         `json:"paymentDate" db:"payment_date"`
 	PaymentAmount      float64        `json:"paymentAmount" db:"payment_amount"`
 	TotalPaymentAmount float64        `json:"totalPaymentAmount" db:"total_payment_amount"`
+	VoterAmount        int            `json:"voterAmount" db:"voter_amount"`
 	Votes              []struct {
 		Amount     float64 `json:"amount" db:"amount"`
 		IsApproved bool    `json:"isApproved" db:"is_approved"`
