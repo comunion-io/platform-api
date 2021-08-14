@@ -7,6 +7,7 @@ import (
 	"cos-backend-com/src/cores"
 	"cos-backend-com/src/cores/routers/bounties"
 	"cos-backend-com/src/cores/routers/categories"
+	"cos-backend-com/src/cores/routers/contract"
 	"cos-backend-com/src/cores/routers/discos"
 	"cos-backend-com/src/cores/routers/exchanges"
 	"cos-backend-com/src/cores/routers/files"
@@ -137,7 +138,6 @@ func (p *appConfig) ConfigRoutes() {
 				s.Router("/isBinding",
 					s.Get(startups.StartUpsHandler{}).Action("IsTokenAddrBinding"),
 				),
-
 			),
 			//restore startup settings
 			s.Router("/:id/settings:restore",
@@ -273,7 +273,7 @@ func (p *appConfig) ConfigRoutes() {
 		),
 		s.Router("/proposal/:id",
 			// s.Filter(filters.LoginRequiredInner),
-			s.Post(proposals.ProposalEventsHandler{}).Action("UpdateProposalStatus"),
+			s.Put(proposals.ProposalEventsHandler{}).Action("UpdateProposalStatus"),
 			s.Router("/vote", s.Post(proposals.ProposalEventsHandler{}).Action("VoteProposal")),
 		),
 
@@ -305,6 +305,17 @@ func (p *appConfig) ConfigRoutes() {
 		),
 		s.Router("/discos:statDiscoTotal",
 			s.Post(discos.DiscosHandler{}).Action("StatDiscoTotal"),
+		),
+
+		s.Router("/contract",
+			s.Router("/actions",
+				s.Router("/:type",
+					s.Get(contract.ContractActionsHandler{}).Filter(filters.LoginRequiredInner).Action("List"),
+					s.Post(contract.ContractActionsHandler{}).Filter(filters.LoginRequiredInner).Action("Create"),
+					s.Router("/:id",
+						s.Get(contract.ContractActionsHandler{}).Filter(filters.LoginRequiredInner).Action("Get")),
+				),
+			),
 		),
 	)
 }
