@@ -196,6 +196,27 @@ COMMENT ON COLUMN comunion.categories.source IS 'startup';
 
 
 --
+-- Name: contract_actions; Type: TABLE; Schema: comunion; Owner: -
+--
+
+CREATE TABLE comunion.contract_actions (
+    id character varying(255) NOT NULL,
+    uid bigint NOT NULL,
+    type integer NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT contract_actions_pkey PRIMARY KEY (id, uid, type)
+);
+
+
+--
+-- Name: COLUMN contract_actions.type; Type: COMMENT; Schema: comunion; Owner: -
+--
+
+COMMENT ON COLUMN comunion.contract_actions.type IS 'DISCO: 1';
+
+
+--
 -- Name: disco_investors; Type: TABLE; Schema: comunion; Owner: -
 --
 
@@ -242,12 +263,15 @@ CREATE TABLE comunion.exchange_transactions (
     id bigint DEFAULT comunion.id_generator() NOT NULL,
     tx_id text NOT NULL,
     exchange_id bigint NOT NULL,
-    account text NOT NULL,
+    sender text DEFAULT ''::text NOT NULL,
+    receiver text DEFAULT ''::text NOT NULL,
     type integer NOT NULL,
     name text DEFAULT ''::text NOT NULL,
     total_value double precision DEFAULT 0 NOT NULL,
     token_amount1 double precision DEFAULT 0 NOT NULL,
     token_amount2 double precision DEFAULT 0 NOT NULL,
+    amount0 text DEFAULT ''::text NOT NULL,
+    amount1 text DEFAULT ''::text NOT NULL,
     fee double precision DEFAULT 0 NOT NULL,
     price_per_token1 double precision DEFAULT 0 NOT NULL,
     price_per_token2 double precision DEFAULT 0 NOT NULL,
@@ -285,17 +309,21 @@ CREATE TABLE comunion.exchanges (
     token_name1 text NOT NULL,
     token_symbol1 text NOT NULL,
     token_address1 text,
+    token_divider1 bigint DEFAULT 1 NOT NULL,
     token_name2 text NOT NULL,
     token_symbol2 text NOT NULL,
     token_address2 text,
-    newest_day text,
+    token_divider2 bigint DEFAULT 1 NOT NULL,
+    newest_day text DEFAULT ''::text NOT NULL,
     newest_pooled_tokens1 double precision DEFAULT 0 NOT NULL,
     newest_pooled_tokens2 double precision DEFAULT 0 NOT NULL,
-    last_day text,
+    last_day text DEFAULT ''::text NOT NULL,
     last_pooled_tokens1 double precision DEFAULT 0 NOT NULL,
     last_pooled_tokens2 double precision DEFAULT 0 NOT NULL,
     price double precision DEFAULT 0 NOT NULL,
     fees double precision DEFAULT 0 NOT NULL,
+    reserve0 text DEFAULT ''::text NOT NULL,
+    reserve1 text DEFAULT ''::text NOT NULL,
     status integer DEFAULT 0 NOT NULL,
     created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
@@ -339,6 +367,96 @@ CREATE TABLE comunion.hunters (
 
 
 --
+-- Name: proposal_terms; Type: TABLE; Schema: comunion; Owner: -
+--
+
+CREATE TABLE comunion.proposal_terms (
+    id bigint DEFAULT comunion.id_generator() NOT NULL,
+    proposal_id bigint NOT NULL,
+    amount double precision NOT NULL,
+    content text NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: proposal_votes; Type: TABLE; Schema: comunion; Owner: -
+--
+
+CREATE TABLE comunion.proposal_votes (
+    id bigint DEFAULT comunion.id_generator() NOT NULL,
+    tx_id text NOT NULL,
+    proposal_id bigint NOT NULL,
+    amount double precision NOT NULL,
+    is_approved boolean NOT NULL,
+    wallet_addr text NOT NULL,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: proposals; Type: TABLE; Schema: comunion; Owner: -
+--
+
+CREATE TABLE comunion.proposals (
+    id bigint DEFAULT comunion.id_generator() NOT NULL,
+    tx_id text NOT NULL,
+    startup_id bigint NOT NULL,
+    wallet_addr text NOT NULL,
+    contract_addr text NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
+    title text NOT NULL,
+    type integer NOT NULL,
+    user_id bigint NOT NULL,
+    contact text NOT NULL,
+    description text NOT NULL,
+    voter_type integer NOT NULL,
+    supporters integer NOT NULL,
+    minimum_approval_percentage integer NOT NULL,
+    duration integer NOT NULL,
+    has_payment boolean NOT NULL,
+    payment_addr text,
+    payment_type smallint,
+    payment_months integer,
+    payment_date text,
+    payment_amount double precision,
+    total_payment_amount double precision,
+    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: COLUMN proposals.status; Type: COMMENT; Schema: comunion; Owner: -
+--
+
+COMMENT ON COLUMN comunion.proposals.status IS '0：待确认，1：未开始，2：进行中，3：已结束，4：未成案，5：提案被拒绝，6：提案被通过';
+
+
+--
+-- Name: COLUMN proposals.type; Type: COMMENT; Schema: comunion; Owner: -
+--
+
+COMMENT ON COLUMN comunion.proposals.type IS '1：Finance，2：Governance，3：Strategy，4：Product，5：Media，6：Community，7：Node';
+
+
+--
+-- Name: COLUMN proposals.voter_type; Type: COMMENT; Schema: comunion; Owner: -
+--
+
+COMMENT ON COLUMN comunion.proposals.voter_type IS '1：FounderAssign，2：POS，3：All';
+
+
+--
+-- Name: COLUMN proposals.payment_type; Type: COMMENT; Schema: comunion; Owner: -
+--
+
+COMMENT ON COLUMN comunion.proposals.payment_type IS '1：一次性支付，2：按月支付';
+
+
+--
 -- Name: startup_revisions; Type: TABLE; Schema: comunion; Owner: -
 --
 
@@ -366,26 +484,19 @@ CREATE TABLE comunion.startup_setting_revisions (
     token_symbol text NOT NULL,
     token_addr text,
     wallet_addrs jsonb DEFAULT '[]'::jsonb NOT NULL,
-    voter_type integer NOT NULL,
     voter_token_limit bigint,
-    assigned_proposers text[],
-    assigned_voters text[],
-    proposer_type integer NOT NULL,
-    proposer_token_limit bigint,
-    proposal_supporters bigint NOT NULL,
-    proposal_min_approval_percent bigint NOT NULL,
-    proposal_min_duration bigint NOT NULL,
-    proposal_max_duration bigint NOT NULL,
     created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    proposer_type integer DEFAULT 1 NOT NULL,
+    proposer_token_limit bigint NOT NULL,
+    proposal_supporters bigint DEFAULT 0 NOT NULL,
+    proposal_min_approval_percent bigint DEFAULT 0 NOT NULL,
+    proposal_min_duration bigint DEFAULT 0 NOT NULL,
+    proposal_max_duration bigint DEFAULT 0 NOT NULL,
+    assigned_voters text[],
+    assigned_proposers text[],
+    voter_type integer DEFAULT 1 NOT NULL
 );
-
-
---
--- Name: COLUMN startup_setting_revisions.voter_type; Type: COMMENT; Schema: comunion; Owner: -
---
-
-COMMENT ON COLUMN comunion.startup_setting_revisions.voter_type IS 'FounderAssign 指定人投票 持有一定数量token的人才可以投票;POS;ALL 所有人投票';
 
 
 --
@@ -488,14 +599,14 @@ COMMENT ON COLUMN comunion.transactions.state IS '1 等待确认，2 已确认�
 
 CREATE TABLE comunion.users (
     id bigint DEFAULT comunion.id_generator() NOT NULL,
-    avatar text NOT NULL,
     public_key text NOT NULL,
     nonce text NOT NULL,
     public_secret text NOT NULL,
     private_secret text NOT NULL,
     created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    is_hunter boolean DEFAULT false NOT NULL
+    is_hunter boolean DEFAULT false NOT NULL,
+    avatar text NOT NULL
 );
 
 
@@ -568,6 +679,30 @@ ALTER TABLE ONLY comunion.exchanges
 
 ALTER TABLE ONLY comunion.hunters
     ADD CONSTRAINT hunters_id_pk PRIMARY KEY (id);
+
+
+--
+-- Name: proposal_terms proposal_terms_id_pk; Type: CONSTRAINT; Schema: comunion; Owner: -
+--
+
+ALTER TABLE ONLY comunion.proposal_terms
+    ADD CONSTRAINT proposal_terms_id_pk PRIMARY KEY (id);
+
+
+--
+-- Name: proposal_votes proposal_votes_id_pk; Type: CONSTRAINT; Schema: comunion; Owner: -
+--
+
+ALTER TABLE ONLY comunion.proposal_votes
+    ADD CONSTRAINT proposal_votes_id_pk PRIMARY KEY (id);
+
+
+--
+-- Name: proposals proposals_id_pk; Type: CONSTRAINT; Schema: comunion; Owner: -
+--
+
+ALTER TABLE ONLY comunion.proposals
+    ADD CONSTRAINT proposals_id_pk PRIMARY KEY (id);
 
 
 --
