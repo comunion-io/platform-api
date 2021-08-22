@@ -55,7 +55,7 @@ func (p *users) GetBypublicKey(ctx context.Context, publicKey string, output int
 	stmt := `
 		SELECT *
 		FROM users
-		WHERE public_key = ${publicKey};
+		WHERE public_key ILIKE ${publicKey};
 	`
 	query, args := util.PgMapQuery(stmt, map[string]interface{}{
 		"{publicKey}": publicKey,
