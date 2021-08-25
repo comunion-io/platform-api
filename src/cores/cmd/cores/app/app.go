@@ -100,6 +100,9 @@ func (p *appConfig) ConfigRoutes() {
 			s.Get(startups.StartUpsHandler{}).Action("List"),
 			s.Router("/:id",
 				s.Get(startups.StartUpsHandler{}).Action("Get"),
+				s.Router("/exchange",
+					s.Get(exchanges.ExchangesHandler{}).Action("GetExchangeByStartup"),
+				),
 			),
 		),
 
@@ -150,7 +153,6 @@ func (p *appConfig) ConfigRoutes() {
 			),
 			s.Router("/:id/exchange",
 				s.Post(exchanges.ExchangesHandler{}).Action("CreateExchange"),
-				s.Get(exchanges.ExchangesHandler{}).Action("GetExchangeByStartup"),
 			),
 		),
 
