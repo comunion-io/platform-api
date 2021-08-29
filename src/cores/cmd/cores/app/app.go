@@ -288,6 +288,7 @@ func (p *appConfig) ConfigRoutes() {
 						s.Post(discos.DiscosInvestorsHandler{}).Filter(filters.LoginRequiredInner).Action("CreateStartupDiscoInvestor"),
 						s.Get(discos.DiscosInvestorsHandler{}).Action("ListStartupDiscoInvestor"),
 					),
+					s.Delete(discos.DiscosHandler{}).Filter(filters.LoginRequiredInner).Action("DeleteStartupDisco"),
 				),
 				s.Router("/discoSwapState",
 					s.Get(discos.DiscosHandler{}).Action("GetDiscoSwapState"),

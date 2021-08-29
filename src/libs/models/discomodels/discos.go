@@ -261,3 +261,19 @@ func (c *discos) GetDiscoSwapState(ctx context.Context, startupId *flake.ID, out
 		return db.GetContext(ctx, output, query, args...)
 	})
 }
+
+func (c *discos) DeleteDisco(ctx context.Context, startupId, uid flake.ID) (err error) {
+	stmt := `
+		DELETE FROM discos
+		WHERE startup_id = ${startupId} AND state < 3;
+	`
+	query, args := util.PgMapQuery(stmt, map[string]interface{}{
+		"{startupId}": startupId,
+	})
+
+	println(startupId)
+	return c.Invoke(ctx, func(db dbconn.Q) (er error) {
+		_, er = db.ExecContext(ctx, query, args...)
+		return er
+	})
+}

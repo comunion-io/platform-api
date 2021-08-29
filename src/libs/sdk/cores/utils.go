@@ -22,6 +22,8 @@ func AvailableTokens(token Token) PayTokenListOutput {
 		Token{"ETH", "ETH"},
 		Token{"BTC", "BTC"},
 		Token{"USDT", "USDT"},
+		Token{"USD", "USD"},
+		Token{"CNY", "CNY"},
 	}
 	arrTokens = append(arrTokens, token)
 	var payTokens PayTokenListOutput = PayTokenListOutput{arrTokens}
