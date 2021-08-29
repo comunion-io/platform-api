@@ -163,3 +163,17 @@ func (h *DiscosHandler) GetDiscoSwapState(startupId flake.ID) (res interface{}) 
 	res = apires.With(&output)
 	return
 }
+
+func (h *DiscosHandler) DeleteStartupDisco(startupId flake.ID) (res interface{}) {
+	var uid flake.ID
+	h.Ctx.Find(&uid, "uid")
+
+	if err := discomodels.Discos.DeleteDisco(h.Ctx, startupId, uid); err != nil {
+		h.Log.Warn(err)
+		res = apierror.HandleError(err)
+		return
+	}
+
+	res = apires.With(http.StatusOK)
+	return
+}
