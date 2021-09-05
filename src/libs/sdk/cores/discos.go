@@ -110,9 +110,9 @@ const (
 
 type ListDiscosInput struct {
 	pagination.ListRequest
-	Keyword     string             `param:"keyword"`
-	OrderBY     *ListDiscosOrderBy `param:"orderBY"`
-	IsOrderDesc bool               `param:"isDesc"`
+	Keyword string             `param:"keyword"`
+	OrderBy *ListDiscosOrderBy `param:"orderBy"`
+	IsAsc   bool               `param:"isAsc"`
 }
 
 type ListDiscosResult struct {
