@@ -95,28 +95,24 @@ func (c *discos) ListDisco(ctx context.Context, input *cores.ListDiscosInput, ou
 		keyword = "%" + util.PgEscapeLike(input.Keyword) + "%"
 		filterStmt += `AND s.name ILIKE ${keyword}`
 	}
-	if input.OrderBy == nil {
-		orderStmt = fmt.Sprintf(orderStmt, "d.created_at", "desc")
-	} else {
-		orderByField := ""
-		switch *input.OrderBy {
-		case cores.ListDiscosOrderByTime:
-			orderByField = "d.created_at"
-		case cores.ListDiscosOrderByName:
-			orderByField = "s.name"
-		case cores.ListDiscosOrderByInvestmentReward:
-			orderByField = "d.investment_reward"
-		case cores.ListDiscosOrderByLiquidityPool:
-			orderByField = "d.add_liquidity_pool"
-		}
-		orderField := ""
-		if input.IsAsc {
-			orderField = "asc"
-		} else {
-			orderField = "desc"
-		}
-		orderStmt = fmt.Sprintf(orderStmt, orderByField, orderField)
+	orderByField := "d.created_at"
+	switch *input.OrderBy {
+	case cores.ListDiscosOrderByTime:
+		orderByField = "d.created_at"
+	case cores.ListDiscosOrderByName:
+		orderByField = "s.name"
+	case cores.ListDiscosOrderByInvestmentReward:
+		orderByField = "d.investment_reward"
+	case cores.ListDiscosOrderByLiquidityPool:
+		orderByField = "d.add_liquidity_pool"
 	}
+	orderField := ""
+	if input.IsAsc {
+		orderField = "asc"
+	} else {
+		orderField = "desc"
+	}
+	orderStmt = fmt.Sprintf(orderStmt, orderByField, orderField)
 	countStmt := `
 		SELECT count(*)
 		FROM discos d
